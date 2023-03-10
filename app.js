@@ -46,6 +46,10 @@ function showPosts() {
         // всередині цього елементу списку додаємо опис завдання
         li.innerHTML = task;
 
+        const bothIconsContainer = document.createElement('div');
+		bothIconsContainer.className = 'both-icons-container';
+		li.appendChild(bothIconsContainer);
+
         // сторюємо кнопку для видалення
         const button = document.createElement('button');
         // додаємо їй клас
@@ -53,12 +57,12 @@ function showPosts() {
         // всередину кнопку додаємо значення х
         button.innerHTML = 'x';
         // записуємо кнопку після всього, що є всередині елементу списку
-        li.append(button);
+        bothIconsContainer.append(button);
 
         const svg = document.createElement('button');
         svg.classList.add('edit');
         svg.innerHTML =  '/';
-        li.append(svg);
+        bothIconsContainer.append(svg);
         
         // записуємо цей елемент в кінець списку
         taskList.append(li);
@@ -136,30 +140,27 @@ function storeTasksInLocalStorage(task) {
 
 // видалити якусь конкретну таску
 function deleteAndEditTask(event) {
-    const editItem = event.target.parentElement.firstChild.textContent;
+    let tasks;
+    const editItem = event.target.parentElement.parentElement.firstChild.textContent;
         // console.log (editItem);
     // якщо ми клікнули по хрестику  - тоді
     if (event.target.classList.contains('remove-task')) {
         // пересвідчуємось чи юзер справді хоче видалити цей елемент
         if(confirm('Ви впевнені що хочете видалити цей елемент?')) {
             // видаляємо цей елемент списку, в якому знаходиться хрестик
-            event.target.parentElement.remove();
+            event.target.parentElement.parentElement.remove();
             // викликаємо функцію яка буде видаляти завдання з Local Storage
-            removeTaskFromLocalStorage(event.target.parentElement);
+            removeTaskFromLocalStorage(event.target.parentElement.parentElement);
         }
     }
     if (event.target.classList.contains('edit')) {
-        editItem =  prompt('Виможете відредагувати дане завдання:', editItem);
-       
-
-
-        } 
-}
-
-
+        const editTask =  prompt('Виможете відредагувати дане завдання:', editItem);
+        event.target.parentElement.parentElement.firstChild.textContent = editTask;
+            } 
+        }
 
 function removeTaskFromLocalStorage(taskAll) {
-   // оголошуємо змінну яка буде використовуватись для списку завдань
+   // оголшуємо змінну яка буде використовуватись для списку завдань
    let tasks;
    tasks = JSON.parse(localStorage.getItem('tasks'));
    tasks.splice(taskAll, 1);
@@ -176,6 +177,7 @@ function removeTaskFromLocalStorage(taskAll) {
     // запусиємо нові задачі в Local Storage
     localStorage.setItem('tasks', JSON.stringify(filteredTasks));
 }
+
 
 // видалити всі таски
 function removeAllTasks() {
