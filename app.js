@@ -139,9 +139,15 @@ function storeTasksInLocalStorage(task) {
 }
 
 // видалити якусь конкретну таску
+
 function deleteAndEditTask(event) {
     let tasks;
+    let tasksArray = Array.from(taskList.childNodes);
+    let iconContainter = event.target.parentElement;
+    let taskByIndex = tasksArray.indexOf(iconContainter.closest('li'));
+    // console.log(tasksArray);
     const editItem = event.target.parentElement.parentElement.firstChild.textContent;
+
         // console.log (editItem);
     // якщо ми клікнули по хрестику  - тоді
     if (event.target.classList.contains('remove-task')) {
@@ -156,8 +162,30 @@ function deleteAndEditTask(event) {
     if (event.target.classList.contains('edit')) {
         const editTask =  prompt('Виможете відредагувати дане завдання:', editItem);
         event.target.parentElement.parentElement.firstChild.textContent = editTask;
+
+        editTaskInLocalStorage(taskByIndex, editTask);
             } 
         }
+
+       
+function editTaskInLocalStorage(taskByIndex, editTask) {
+    let tasks;
+
+    // перевіряємо чи є у localStorage вже якісь завдання
+    if (localStorage.getItem('tasks') !== null) {
+        // якщо вони там є - витягуємо їх і присвоюємо змінній
+        tasks = JSON.parse(localStorage.getItem('tasks'));
+        // console.log(tasks) 
+    } else {
+        // якщо їх там нема - присвоюємо змінній значення порожнього масиву
+        tasks = []
+    }
+    if(editTask) {
+		tasks.splice(taskByIndex, 1, editTask);
+	}
+
+	localStorage.setItem('tasks', JSON.stringify(tasks));
+}
 
 function removeTaskFromLocalStorage(taskAll) {
    // оголшуємо змінну яка буде використовуватись для списку завдань
